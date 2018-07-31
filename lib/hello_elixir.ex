@@ -1,18 +1,14 @@
 defmodule HelloElixir do
-  @moduledoc """
-  Documentation for HelloElixir.
-  """
+  use Application
 
-  @doc """
-  Hello world.
+  def start(_type, _args) do
+    import Supervisor.Spec
 
-  ## Examples
+    children = [
+      supervisor(GRPC.Server.Supervisor, [{Helloworld.Greeter.Server, 50055}])
+    ]
 
-      iex> HelloElixir.hello
-      :world
-
-  """
-  def hello do
-    :world
+    opts = [strategy: :one_for_one, name: HelloElixir]
+    Supervisor.start_link(children, opts)
   end
 end
